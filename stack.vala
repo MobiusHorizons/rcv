@@ -34,6 +34,9 @@ public class Stack: Object{
 			}
 			return line;
 	}
+	public bool has(int n){ //make sure stack has enough elements
+		return n <= this.myArray.length;
+	}
 			
 } // end Stack class.
 

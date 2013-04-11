@@ -96,7 +96,12 @@ public class main_window: Window {
 	
 	}
 	private void on_enter(){
-		this.Out.buffer.text = myCalc.calc(this.In.buffer.text);
-		this.In.set_text("");
+		try {
+			this.Out.buffer.text = myCalc.calc(this.In.buffer.text);
+			this.In.set_text("");
+		} catch (CalcError e){
+			this.Out.buffer.text += "\nError: %s".printf(e.message);
+			stderr.printf ("Error: %s\n", e.message);
+		}
 	}
 }

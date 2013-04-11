@@ -1,3 +1,8 @@
+public errordomain CalcError{
+	STACK_UNDERRUN,
+	PARSE_ERROR,
+	REGISTER_ERROR
+}
 public class rpn: Object {
 	private double[] reg;
 	private Stack st;
@@ -5,7 +10,14 @@ public class rpn: Object {
 		this.st = new Stack();
 		this.reg = new double[registers];
 	}
-	public string calc(string input){
+	private void require(string op, int n) throws CalcError{
+		string s = "s";
+		if (!st.has(n)) {
+			if (n == 1){ s = "" ;}
+			throw new CalcError.STACK_UNDERRUN(@"$op requires at least $n element$(s) in the stack");
+		}
+	}
+	public string calc(string input) throws CalcError{
 		string line = input + "\n"; // add terminating character.
 		string temp = "";
 		unichar c;
@@ -17,6 +29,7 @@ public class rpn: Object {
 				switch (temp) {
 					case "sw":
 						// switch a, b
+						this.require("Switch", 2); 
 						double temp1 = this.st.pop();
 						double temp2 = this.st.pop();
 						this.st.push(temp1);
@@ -24,6 +37,7 @@ public class rpn: Object {
 						break;
 					case "sto": // x y sto 
 						    // stores x in register y
+						this.require("Store", 2);
 						int rn = (int)this.st.pop();
 						rn ++;
 						if (rn > reg.length){
@@ -33,42 +47,51 @@ public class rpn: Object {
 						reg[rn]=this.st.pop();
 						break;
 					case "ret":
+						this.require("Return", 1);
 						int rn = (int)this.st.pop();
 						rn ++;
 						// error checking here;
 						this.st.push(reg[rn]);
 						break;
 					case "clr":
+						this.require("Clear Register", 1);
 						int rn = (int)this.st.pop();
 						rn ++;
 						// error checking here;
 						reg[rn] = 0;
 						break;
 					case "drop": // drop item from stack
+						this.require("Drop", 1);
 						this.st.pop();
 						break;
 					case "dropn": //drop n members from stack
+						this.require("Drop n", 1);
 						int n = (int)this.st.pop();
+						this.require(@"Drop $n",n);
 						for(i = 0; i < n; i++){
 							this.st.pop();
 						}
 						break;
 					case "+":
+						this.require("Addition", 2);
 						double tmp = this.st.pop();
 						tmp += this.st.pop();
 						this.st.push(tmp);
 						break;
 					case "-":
+						this.require("Subtraction",2);
 						double tmp = this.st.pop();
 						tmp = this.st.pop() - tmp;
 						this.st.push(tmp);
 						break;
 					case "/":
+						this.require("Division",2);
 						double tmp = this.st.pop();
 						tmp = this.st.pop()/ tmp;
 						this.st.push(tmp);
 						break;
 					case "*":
+						this.require("Multiplication",2);
 						double tmp = this.st.pop();
 						tmp *= this.st.pop();
 						this.st.push(tmp);
