@@ -43,6 +43,7 @@ public class Stack: Object{
 } // end Stack class.
 
 public static int main (){
+	var reg = new double[10]; // start with 10 registers
 	var st = new Stack();
 	string line= "";
 	while (getln(out line)){
@@ -55,6 +56,44 @@ public static int main (){
 			}
 			if (c == ' ' || c == '\t'){ //whitespace
 				switch (temp) {
+					case "sw":
+						// switch a, b
+						double temp1 = st.pop();
+						double temp2 = st.pop();
+						st.push(temp1);
+						st.push(temp2);
+						break;
+					case "sto": // x y sto 
+						    // stores x in register y
+						int rn = (int)st.pop();
+						rn ++;
+						if (rn > reg.length){
+							reg.resize(rn);
+							reg[0] = rn;
+						}
+						reg[rn]=st.pop();
+						break;
+					case "ret":
+						int rn = (int)st.pop();
+						rn ++;
+						// error checking here;
+						st.push(reg[rn]);
+						break;
+					case "clr":
+						int rn = (int)st.pop();
+						rn ++;
+						// error checking here;
+						reg[rn] = 0;
+						break;
+					case "drop": // drop item from stack
+						st.pop();
+						break;
+					case "dropn": //drop n members from stack
+						int n = (int)st.pop();
+						for(i = 0; i < n; i++){
+							st.pop();
+						}
+						break;
 					case "+":
 						double tmp = st.pop();
 						tmp += st.pop();
@@ -62,12 +101,12 @@ public static int main (){
 						break;
 					case "-":
 						double tmp = st.pop();
-						tmp -= st.pop();
+						tmp = st.pop() - tmp;
 						st.push(tmp);
 						break;
 					case "/":
 						double tmp = st.pop();
-						tmp /= st.pop();
+						tmp = st.pop()/ tmp;
 						st.push(tmp);
 						break;
 					case "*":
