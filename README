@@ -1,0 +1,12 @@
+Rpn Calcuator Vala
+
+writen by: Paul Martin
+
+license: GPL v3.0 see gpl-3.0.txt
+
+Dependencies: Vala, Gtk3
+
+to build: 
+
+make
+./rpnGtk
