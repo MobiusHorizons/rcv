@@ -14,7 +14,7 @@ public class rpn: Object {
 		string s = "s";
 		if (!st.has(n)) {
 			if (n == 1){ s = "" ;}
-			throw new CalcError.STACK_UNDERRUN(@"$op requires at least $n element$(s) in the stack");
+			throw new CalcError.STACK_UNDERRUN("%s requires at least %d element%s in the stack".printf(op,n,s));
 		}
 	}
 	public string calc(string input) throws CalcError{
@@ -23,7 +23,7 @@ public class rpn: Object {
 		unichar c;
 		for (int i = 0; line.get_next_char(ref i, out c);){
 			if (c == '\n'){ //newline
-				c = ' ';
+				c = (unichar)' ';
 			}
 			if (c == ' ' || c == '\t'){ //whitespace
 				switch (temp) {
