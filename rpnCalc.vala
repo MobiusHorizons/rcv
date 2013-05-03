@@ -1,13 +1,20 @@
+/********************************
+ * File: rpnCalc.vala		*
+ * Author: Paul Martin		*
+ * Date: 03-28-12		*
+ ********************************/
+
 public errordomain CalcError{
 	STACK_UNDERRUN,
 	PARSE_ERROR,
 	REGISTER_ERROR
 }
+
 public class rpn: Object {
-	private double[] reg;
-	private Stack st;
-	private HashTable<string,string> userFunc;
-	public rpn(int registers = 10){
+	private double[] reg;  	// register for intermediate storage
+	private Stack st;	// main stack
+	private HashTable<string,string> userFunc;	// used for storing user functions
+	public rpn(int registers = 10){			// 
 		this.st = new Stack();
 		this.reg = new double[registers];
 		this.userFunc = new HashTable<string,string> (str_hash, str_equal);

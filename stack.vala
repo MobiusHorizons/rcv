@@ -1,7 +1,7 @@
 /****************************************
  * Reverse Polish Notation Calculator	*
  * Author: Paul Martin			*
- * Date: 				*
+ * Date:   03-18-13			*
  ****************************************/
 
 public class Stack: Object{

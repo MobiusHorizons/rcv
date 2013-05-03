@@ -1,3 +1,9 @@
+/********************************
+ * File: window.vala		*
+ * Author: Paul Martin		*
+ * Date:   03-28-13		*
+ ********************************/
+
 using Gtk;
 using GLib;
 

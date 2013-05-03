@@ -1,3 +1,9 @@
+/********************************
+ * File: main.vala		*
+ * Author: Paul Martin		*
+ * Date: 03-38-13		*	
+ ********************************/
+
 int main (string[] args) {
 	bool cli_bool = false;
 	bool file_bool = false;
@@ -7,7 +13,7 @@ int main (string[] args) {
 		if (file_bool){
 			filename = arg;
 		}
-		switch (arg){
+		switch (arg){	// parse command line arguments
 			case "--cli":
 				cli_bool = true;
 				break;
@@ -18,7 +24,7 @@ int main (string[] args) {
 		}
 	}
 	
-	if (args.length > 0 && args[1] == "--cli"){
+	if (cli_bool){
 		var cli = new CLI(filename);
 		cli.run();
 	} else {
