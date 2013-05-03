@@ -17,7 +17,7 @@ public class main_window: Window {
 	}
 
 	private void preload(string filename){
-		var file = FileStream.open(filename,"r");
+		var file = File.new_for_path(filename);
 		string line = "";
 		int i = 0;
 		while(getln(out line, file)){

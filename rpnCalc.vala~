@@ -114,7 +114,7 @@ public class rpn: Object {
 								this.calc(f);
 							} else {
 								double val;
-								if (double.try_parse(temp, out val)){
+								if (double.try_parse(temp, out val){
 									this.st.push(val);
 								} else {
 									throw new CalcError.PARSE_ERROR("%s is not a known function or number".printf(temp));

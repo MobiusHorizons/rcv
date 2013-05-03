@@ -5,7 +5,7 @@ public class CLI: Object{
 	public CLI(string filename = ""){
 		this.myCalc = new rpn();
 		if (filename != ""){
-			var file = FileStream.open(filename, "r");
+			var file = FileStream.open(filename, 'r');
 			string line = "";
 			int i = 0;
 			while(getln(out line, file)){
