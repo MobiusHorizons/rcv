@@ -25,17 +25,17 @@ public class rpn: Object {
 		unichar c;
 		for (int i = 0; line.get_next_char(ref i, out c);){
 			if (c == '\n'){ //newline
-				c = (unichar)' ';
+				c = (unichar)' '; //make sure the last argument is parsed correctly
 			}
 			if (c == ' ' || c == '\t'){ //whitespace
 				switch (temp) {
 					case "define":
 						// user defined function
-						string[] parts = input.slice(i, input.length).split(" ",2); // 
+						string[] parts = input.slice(i, input.length).split(" ",2); // split into function name and body 
 						if (parts.length == 2){ // make sure we have a function name and a body.
 							this.userFunc.insert(parts[0],parts[1]); // add it to the hash
 						}
-						i += parts[0].length;
+						i += parts[0].length; // skip the function name, but run the body
 						break;
 					case "sw":
 						// switch a, b
@@ -76,31 +76,31 @@ public class rpn: Object {
 						break;
 					case "dropn": //drop n members from stack
 						this.require("Drop n", 1);
-						int n = (int)this.st.pop();
-						this.require(@"Drop $n",n);
-						for(i = 0; i < n; i++){
+						var n = this.st.pop();
+						this.require(@"Drop $n",(int)n);
+						for(int count = 0; count < n; count++){
 							this.st.pop();
 						}
 						break;
-					case "+":
+					case "+": // adition
 						this.require("Addition", 2);
 						double tmp = this.st.pop();
 						tmp += this.st.pop();
 						this.st.push(tmp);
 						break;
-					case "-":
+					case "-": // subtraction
 						this.require("Subtraction",2);
 						double tmp = this.st.pop();
 						tmp = this.st.pop() - tmp;
 						this.st.push(tmp);
 						break;
-					case "/":
+					case "/": //division
 						this.require("Division",2);
 						double tmp = this.st.pop();
 						tmp = this.st.pop()/ tmp;
 						this.st.push(tmp);
 						break;
-					case "*":
+					case "*": //multiplication
 						this.require("Multiplication",2);
 						double tmp = this.st.pop();
 						tmp *= this.st.pop();
@@ -109,14 +109,14 @@ public class rpn: Object {
 			
 					default:
 						if (temp != ""){
-							var f = this.userFunc.get(temp);
-							if (f != null){
-								this.calc(f);
-							} else {
+							var f = this.userFunc.get(temp);// try to get a user defined function
+							if (f != null){ 		// if there was one
+								this.calc(f); 		// execute it recursively
+							} else { 			// otherwise
 								double val;
-								if (double.try_parse(temp, out val)){
-									this.st.push(val);
-								} else {
+								if (double.try_parse(temp, out val)){ 	// if it is a number
+									this.st.push(val);   		// push it to the stack
+								} else {				// else throw an error
 									throw new CalcError.PARSE_ERROR("%s is not a known function or number".printf(temp));
 								}
 							}
@@ -124,7 +124,7 @@ public class rpn: Object {
 						break;
 				} // end case statement
 				temp = "";
-			} else {
+			} else { // append c to string
 				temp += "%s".printf(c.to_string());
 			}
 
