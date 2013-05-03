@@ -1,11 +1,9 @@
 
-all: rpn rpnGtk
+all: rpn
 
 
-rpn: rpn.vala
-	valac rpn.vala 
-rpnGtk: window.vala stack.vala rpnCalc.vala main.vala
-	valac --pkg gtk+-3.0 stack.vala rpnCalc.vala window.vala main.vala -o rpnGtk
+rpn: window.vala stack.vala rpnCalc.vala main.vala cli.vala
+	valac --pkg gtk+-3.0 stack.vala rpnCalc.vala window.vala main.vala cli.vala -o rpn
 
 clean:
-	rm -f rpn rpnGtk 
+	rm -f rpn 

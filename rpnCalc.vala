@@ -6,9 +6,11 @@ public errordomain CalcError{
 public class rpn: Object {
 	private double[] reg;
 	private Stack st;
+	private HashTable<string,string> userFunc;
 	public rpn(int registers = 10){
 		this.st = new Stack();
 		this.reg = new double[registers];
+		this.userFunc = new HashTable<string,string> (str_hash, str_equal);
 	}
 	private void require(string op, int n) throws CalcError{
 		string s = "s";
@@ -27,6 +29,14 @@ public class rpn: Object {
 			}
 			if (c == ' ' || c == '\t'){ //whitespace
 				switch (temp) {
+					case "define":
+						// user defined function
+						string[] parts = input.slice(i, input.length).split(" ",2); // 
+						if (parts.length == 2){ // make sure we have a function name and a body.
+							this.userFunc.insert(parts[0],parts[1]); // add it to the hash
+						}
+						i += parts[0].length;
+						break;
 					case "sw":
 						// switch a, b
 						this.require("Switch", 2); 
@@ -99,11 +109,16 @@ public class rpn: Object {
 			
 					default:
 						if (temp != ""){
-							double val = double.parse(temp);
-							if ( val == 0.0){
-								// regex check to see if it is a value
+							var f = this.userFunc.get(temp);
+							if (f != null){
+								this.calc(f);
+							} else {
+								double val = double.parse(temp);
+								if ( val == 0.0){
+									// regex check to see if it is a value
+								}
+								this.st.push(val);
 							}
-							this.st.push(val);
 						}
 						break;
 				} // end case statement
