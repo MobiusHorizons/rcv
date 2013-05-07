@@ -5,6 +5,24 @@
  * Date: 03-38-13			*	
  ****************************************/
 
+
+void usage(string name){
+/**
+ * void usage(): print out usage
+**/
+	stdout.printf(
+"""Usage:
+%s [--cli] [-f|--filename file]
+
+	--cli: start in command line mode
+
+	-f
+	--filename: load startup file
+	This is used mostly for declarations of constants or functions
+
+""",name);
+}
+
 int main (string[] args) {
 /**
  * main: start the appropriate UI
@@ -29,9 +47,8 @@ int main (string[] args) {
 				file_bool = true;
 				break;
 			case "--help":
-				usage();
+				usage(args[0]);
 				return(0);
-				break;
 		}
 	}
 	// run through arguments one by one

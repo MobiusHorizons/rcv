@@ -9,4 +9,4 @@ Dependencies: Vala, Gtk3
 to build: 
 
 make
-./rpnGtk
+

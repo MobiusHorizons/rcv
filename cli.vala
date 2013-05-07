@@ -33,7 +33,7 @@ public class CLI: Object{
 				}
 			}
 		}
-		println("Paul's RPN calc in Vala"); // welcome screen
+		println("Paul's RPN calc in Vala\nCtrl-D to exit"); // welcome screen
 	}
 
 	private inline void println (string s, FileStream str = stdout){ 
