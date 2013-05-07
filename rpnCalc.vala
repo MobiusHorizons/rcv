@@ -1,19 +1,26 @@
-/********************************
- * File: rpnCalc.vala		*
- * Author: Paul Martin		*
- * Date: 03-28-12		*
- ********************************/
+/****************************************
+ * Reverse Polish Notation Calculator	*
+ * File: rpnCalc.vala			*
+ * Author: Paul Martin			*
+ * Date: 03-28-12			*
+ ****************************************/
+using Posix;
 
 public errordomain CalcError{
+/**
+ * Various kinds of errors
+**/
 	STACK_UNDERRUN,
 	PARSE_ERROR,
-	REGISTER_ERROR
+	REGISTER_ERROR,
+	RANGE_ERROR
 }
 
 public class rpn: Object {
 	private double[] reg;  	// register for intermediate storage
 	private Stack st;	// main stack
 	private HashTable<string,string> userFunc;	// used for storing user functions
+	private string fname = "User"; 			// used to know the name of the currently running user function
 	public rpn(int registers = 10){			// 
 		this.st = new Stack();
 		this.reg = new double[registers];
@@ -36,6 +43,12 @@ public class rpn: Object {
 			}
 			if (c == ' ' || c == '\t'){ //whitespace
 				switch (temp) {
+					case "require":
+						// require certain number of arguments in the stack
+						this.require("Require", 1);
+						int r = (int) this.st.pop();
+						this.require(fname,r);
+						break;
 					case "define":
 						// user defined function
 						string[] parts = input.slice(i, input.length).split(" ",2); // split into function name and body 
@@ -67,6 +80,9 @@ public class rpn: Object {
 						this.require("Return", 1);
 						int rn = (int)this.st.pop();
 						rn ++;
+						if (rn > this.reg.length){
+							throw new CalcError.REGISTER_ERROR("Cannot retrieve past end of registers");
+						}
 						// error checking here;
 						this.st.push(reg[rn]);
 						break;
@@ -74,7 +90,9 @@ public class rpn: Object {
 						this.require("Clear Register", 1);
 						int rn = (int)this.st.pop();
 						rn ++;
-						// error checking here;
+						if (rn > this.reg.length){
+							throw new CalcError.REGISTER_ERROR("Attempted to clear past end of registers");
+						}
 						reg[rn] = 0;
 						break;
 					case "drop": // drop item from stack
@@ -89,6 +107,7 @@ public class rpn: Object {
 							this.st.pop();
 						}
 						break;
+					///////////////////////////// Math /////////////////////
 					case "+": // adition
 						this.require("Addition", 2);
 						double tmp = this.st.pop();
@@ -113,12 +132,65 @@ public class rpn: Object {
 						tmp *= this.st.pop();
 						this.st.push(tmp);
 						break;
-			
+					/////////////////////////////// Trig //////////////////////
+					case "sin": // sin(theta) default is radians
+						this.require("Sine", 1);
+						double tmp = this.st.pop();
+						double res;
+						res = Math.sin(tmp);
+						this.st.push(res);
+						break;
+					case "asin": // sin(theta) default is radians
+						this.require("Arc Sine", 1);
+						double tmp = this.st.pop();
+						double res;
+						res = Math.asin(tmp);
+						if (GLib.errno == Posix.EDOM){
+							throw new CalcError.RANGE_ERROR("acos: %lf is not in range [-1,1]".printf(tmp));
+						}
+						this.st.push(res);
+						break;
+					case "cos": // sin(theta) default is radians
+						this.require("Cosine", 1);
+						double tmp = this.st.pop();
+						double res;
+						res = Math.cos(tmp);
+						this.st.push(res);
+						break;
+					case "acos": // sine(theta) default is radians
+						this.require("Arc Cosine", 1);
+						double tmp = this.st.pop();
+						double res;
+						res = Math.acos(tmp);
+						if (GLib.errno == Posix.EDOM){
+							throw new CalcError.RANGE_ERROR("acos: %lf is not in range [-1,1]".printf(tmp));
+						}
+						this.st.push(res);
+						break;
+					case "tan": // tan(theta) default is radians
+						this.require("Tangent", 1);
+						double tmp = this.st.pop();
+						double res;
+						res = Math.tan(tmp);
+						this.st.push(res);
+						break;
+					case "atan": // arc tan(theta) default is radians
+						this.require("Arc Tangent", 1);
+						double tmp = this.st.pop();
+						double res;
+						res = Math.atan(tmp);
+						if (GLib.errno == Posix.EDOM){
+							throw new CalcError.RANGE_ERROR("acos: %lf is not in range [-1,1]".printf(tmp));
+						}
+						this.st.push(res);
+						break;
 					default:
 						if (temp != ""){
 							var f = this.userFunc.get(temp);// try to get a user defined function
 							if (f != null){ 		// if there was one
+								this.fname = temp;	// set the running function name
 								this.calc(f); 		// execute it recursively
+								this.fname = "User"; 	// clear the function name
 							} else { 			// otherwise
 								double val;
 								if (double.try_parse(temp, out val)){ 	// if it is a number

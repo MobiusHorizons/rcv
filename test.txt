@@ -1,4 +1,7 @@
 50
-define f2c 32 - 1.8 /
-define c2f 1.8 * 32 +
+define pi 3.14159265359
+drop
+define f2c 1 require 32 - 1.8 /
+define c2f 1 require 1.8 * 32 +
+define deg2rad 1 require pi * 180 /
 drop
